@@ -39,7 +39,7 @@ try:
     os.system('sudo mount /dev/sda1 ')
 except:
     print('Error mount')
-time.sleep(2)
+time.sleep(1)
 Config = ConfigParser.ConfigParser()
 Config.read('/home/pi/usb/config.ini')
 
@@ -103,7 +103,7 @@ while True:
         break
       
             
-    #time.sleep(0.2)
+    time.sleep(0.1)
     GPIO.output(17,False)
     if time.time() > timeout:
         print "Timeout"
