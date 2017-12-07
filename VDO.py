@@ -114,16 +114,16 @@ while(GPIO.input(4) == 0):
     GPIO.output(17,False)
 
 while(cap.isOpened()):
-    current_time = time.time()
+    current_time = time.time() * 1000
  
     ret, frame = cap.read()
     if ret==True:
-        if current_time - endtime > 0.2:
+        if current_time - endtime > 200:
             framePic = imutils.resize(frame, w/picResolotion)
             cv2.putText(framePic,"Ambulance "+ str(id) + " id "+str(args["idcamera"])+" {}".format(strftime("%d %b %Y %H:%M:%S")) ,(2,(h/picResolotion) - 5), font, 0.3,(0,255,255),1)    
             
             
-            cv2.imwrite(args["output"]+  'pic/ch' +str(args["idcamera"])  +'/img_{}.jpg'.format(strftime("%d%m%Y%H%M%S")), framePic)
+            cv2.imwrite(args["output"]+  'pic/ch' +str(args["idcamera"])  +'/img_{}.jpg'.format(int(current_time)), framePic)
             endtime = current_time
             countPic+=1
             
@@ -132,7 +132,7 @@ while(cap.isOpened()):
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        if current_time - startTime > 60*timeVDO:
+        if (current_time/1000) - startTime > 60*timeVDO:
             break 
         if(GPIO.input(4) == 0):
             break
@@ -141,7 +141,7 @@ while(cap.isOpened()):
 
 # Release everything if job is finished
 print("Time > "+str(timeVDO) + " m NumPic > "+str(countPic)) 
-print("Process time > "+str(current_time - startTime)+" sec")
+print("Process time > "+str((current_time/1000) - startTime)+" sec")
 out.release()
 cap.release()
 print("Ok!!!") 
