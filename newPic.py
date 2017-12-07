@@ -59,43 +59,47 @@ connectionError = 0
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM) ## Use board pin numbering
 GPIO.setup(17, GPIO.OUT)#Rec
-GPIO.setup(27, GPIO.OUT)#3G
+#GPIO.setup(27, GPIO.OUT)#3G
   
 while True:
     
     timeout = time.time() + 10
     
-    newpic1 = max(glob.iglob('/home/pi/usb/pic/ch1/*.[Jj][Pp][Gg]'), key=os.path.getctime)
-    newpic0 = max(glob.iglob('/home/pi/usb/pic/ch0/*.[Jj][Pp][Gg]'), key=os.path.getctime)
+    try:
+        newpic1 = max(glob.iglob('/home/pi/usb/pic/ch1/*.[Jj][Pp][Gg]'), key=os.path.getctime)
+        newpic0 = max(glob.iglob('/home/pi/usb/pic/ch0/*.[Jj][Pp][Gg]'), key=os.path.getctime)
 
-    if newpic1 != OldPic1 and newpic0 != OldPic0:
-        
-        countNoNewpic = 0
-        OldPic0 = newpic0    
-        OldPic1 = newpic1
-        
-        with open(newpic1, "rb") as image_file1:
-            encoded_string1 = base64.b64encode(image_file1.read())
-        with open(newpic0, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
+        if newpic1 != OldPic1 and newpic0 != OldPic0:
             
-        data = {'ambulance_id':id,'images_name_1':encoded_string1,'images_name_2':encoded_string}
-        try:
-            r = requests.post(pic_url, data=data)
-            GPIO.output(27,True)
-            GPIO.output(17,True)
-            countPic += 1
+            countNoNewpic = 0
+            OldPic0 = newpic0    
+            OldPic1 = newpic1
             
-            connectionError = 0
-        except:
-            GPIO.output(27,False)
-            connectionError += 1
-            if connectionError > 10:
-                print "Connection Error"
-                break    
-            
-    else:
-        countNoNewpic += 1
+            with open(newpic1, "rb") as image_file1:
+                encoded_string1 = base64.b64encode(image_file1.read())
+            with open(newpic0, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+                
+            data = {'ambulance_id':id,'images_name_1':encoded_string1,'images_name_2':encoded_string}
+            try:
+                r = requests.post(pic_url, data=data)
+                #GPIO.output(27,True)
+                GPIO.output(17,True)
+                countPic += 1
+                
+                connectionError = 0
+            except:
+                #GPIO.output(27,False)
+                connectionError += 1
+                if connectionError > 10:
+                    print "Connection Error"
+                    break 
+        else:
+            countNoNewpic += 1   
+
+    except:
+        countNoNewpic += 1     
+    
       
     if countNoNewpic > 20 :
         GPIO.output(17,False)
@@ -111,5 +115,5 @@ while True:
         break
 
 GPIO.output(17,False) 
-GPIO.setup(27,False)  
+#GPIO.setup(27,False)  
 GPIO.cleanup()

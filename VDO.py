@@ -120,7 +120,7 @@ while(cap.isOpened()):
     if ret==True:
         if current_time - endtime > 200:
             framePic = imutils.resize(frame, w/picResolotion)
-            cv2.putText(framePic,"Ambulance "+ str(id) + " id "+str(args["idcamera"])+" {}".format(strftime("%d %b %Y %H:%M:%S")) ,(2,(h/picResolotion) - 5), font, 0.3,(0,255,255),1)    
+            cv2.putText(framePic,"Ambulance "+ str(id) + " id "+str(args["idcamera"])+" {}".format(strftime("%d %b %Y %H:%M:%S")) ,(2,(h/picResolotion) - 5), font, 0.2,(0,255,255),1)    
             
             
             cv2.imwrite(args["output"]+  'pic/ch' +str(args["idcamera"])  +'/img_{}.jpg'.format(int(current_time)), framePic)
