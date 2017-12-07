@@ -118,7 +118,7 @@ while(cap.isOpened()):
  
     ret, frame = cap.read()
     if ret==True:
-        if current_time - endtime > timeSavePic:
+        if current_time - endtime > 0.2:
             framePic = imutils.resize(frame, w/picResolotion)
             cv2.putText(framePic,"Ambulance "+ str(id) + " id "+str(args["idcamera"])+" {}".format(strftime("%d %b %Y %H:%M:%S")) ,(2,(h/picResolotion) - 5), font, 0.3,(0,255,255),1)    
             

@@ -135,7 +135,7 @@ if __name__ == '__main__':
           if(resp.status_code == 200 ):
             countSend+=1
             countError = 0
-            timeout = time.time() + 30 #timeout reset
+            timeout = time.time() + 50 #timeout reset
           else:
             countError+=1
         except:
@@ -153,9 +153,9 @@ if __name__ == '__main__':
       if time.time() > timeout:
         print "Timeout"
         for count in range(0, 3):
-          time.sleep(0.2)
+          time.sleep(0.5)
           GPIO.output(22,True)
-          time.sleep(0.2)
+          time.sleep(0.5)
           GPIO.output(22,False)
         break
       if countError > 20:
