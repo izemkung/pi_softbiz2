@@ -88,7 +88,7 @@ while True:
             
             connectionError = 0
         except:
-            GPIO.output(27,False)
+            #GPIO.output(27,False)
             connectionError += 1
             if connectionError > 10:
                 print "Connection Error"
