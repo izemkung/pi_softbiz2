@@ -75,7 +75,7 @@ cap.set(4,768/2)
 cap.set(5,20)
 #cap.set(3,1024)
 #cap.set(4,768)
-picResolotion = 4
+picResolotion = 2
 #time.sleep(2)
 
 #cap.set(15, -8.0)
