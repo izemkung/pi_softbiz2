@@ -59,7 +59,7 @@ connectionError = 0
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM) ## Use board pin numbering
 GPIO.setup(17, GPIO.OUT)#Rec
-#GPIO.setup(27, GPIO.OUT)#3G
+GPIO.setup(27, GPIO.OUT)#3G
   
 while True:
     
@@ -82,13 +82,13 @@ while True:
         data = {'ambulance_id':id,'images_name_1':encoded_string1,'images_name_2':encoded_string}
         try:
             r = requests.post(pic_url, data=data)
-            #GPIO.output(27,True)
+            GPIO.output(27,True)
             GPIO.output(17,True)
             countPic += 1
             
             connectionError = 0
         except:
-            #GPIO.output(27,False)
+            GPIO.output(27,False)
             connectionError += 1
             if connectionError > 10:
                 print "Connection Error"
@@ -111,5 +111,5 @@ while True:
         break
 
 GPIO.output(17,False) 
-#GPIO.setup(27,False)  
+GPIO.setup(27,False)  
 GPIO.cleanup()
