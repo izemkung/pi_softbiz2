@@ -59,7 +59,7 @@ connectionError = 0
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM) ## Use board pin numbering
 GPIO.setup(17, GPIO.OUT)#Rec
-GPIO.setup(27, GPIO.OUT)#3G
+#GPIO.setup(27, GPIO.OUT)#3G
   
 while True:
     
@@ -82,7 +82,7 @@ while True:
         data = {'ambulance_id':id,'images_name_1':encoded_string1,'images_name_2':encoded_string}
         try:
             r = requests.post(pic_url, data=data)
-            GPIO.output(27,True)
+            #GPIO.output(27,True)
             GPIO.output(17,True)
             countPic += 1
             
@@ -103,7 +103,7 @@ while True:
         break
       
             
-    time.sleep(0.2)
+    #time.sleep(0.2)
     GPIO.output(17,False)
     if time.time() > timeout:
         print "Timeout"
@@ -111,5 +111,5 @@ while True:
         break
 
 GPIO.output(17,False) 
-GPIO.setup(27,False)  
+#GPIO.setup(27,False)  
 GPIO.cleanup()
