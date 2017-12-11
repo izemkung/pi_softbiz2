@@ -72,7 +72,7 @@ while True:
         if newpic1 != OldPic1 and newpic0 != OldPic0:
             
             countNoNewpic = 0
-            OldPic0 = newpic0    
+            OldPic0 = newpic0
             OldPic1 = newpic1
             
             with open(newpic1, "rb") as image_file1:
@@ -107,7 +107,7 @@ while True:
         break
       
             
-    time.sleep(0.1)
+    time.sleep(0.2)
     GPIO.output(17,False)
     if time.time() > timeout:
         print "Timeout"
