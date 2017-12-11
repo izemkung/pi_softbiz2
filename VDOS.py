@@ -104,12 +104,14 @@ ret, frame = cap0.read()
 print("Vdo:"+str(w)+"x"+str(h) + " Pic:"+str(w/picResolotion)+"x"+str(h/picResolotion) )
 
 vdoname =  gmtime()
-out0 = cv2.VideoWriter(args["output"]+ 'vdo/ch0'+'/vdo_{}.avi'.format(strftime("%d%m%Y%H%M%S", vdoname)),fourcc, 20.0, (w,h))
-out1 = cv2.VideoWriter(args["output"]+ 'vdo/ch1'+'/vdo_{}.avi'.format(strftime("%d%m%Y%H%M%S", vdoname)),fourcc, 20.0, (w,h))
-print(args["output"]+ 'vdo/ch' +str(args["idcamera"]) +'/vdo_{}.avi'.format(strftime("%d%m%Y%H%M%S", vdoname))) 
+#out0 = cv2.VideoWriter(args["output"]+ 'vdo/ch0'+'/vdo_{}.avi'.format(strftime("%d%m%Y%H%M%S", vdoname)),fourcc, 20.0, (w,h))
+#out1 = cv2.VideoWriter(args["output"]+ 'vdo/ch1'+'/vdo_{}.avi'.format(strftime("%d%m%Y%H%M%S", vdoname)),fourcc, 20.0, (w,h))
+#print(args["output"]+ 'vdo/ch' +str(args["idcamera"]) +'/vdo_{}.avi'.format(strftime("%d%m%Y%H%M%S", vdoname))) 
 
 #Picture 
 current_time = 0
+last_time = 0;
+connectionError = 0
 countPic = 0
 endtime = 0
 framePic = None 
@@ -130,23 +132,24 @@ while(GPIO.input(4) == 0):
     GPIO.output(17,False)
 
 while(cap0.isOpened() and cap1.isOpened()):
+    GPIO.output(17,False)
     current_time = time.time() * 1000
  
     ret0, frame0 = cap0.read()
     ret1, frame1 = cap1.read()
     if ret0 ==True and ret1 == True:
-        if current_time - endtime > 200:
+        if current_time - endtime > 10:
             framePic0 = imutils.resize(frame0, w/picResolotion)
-            framePic1 = imutils.resize(frame0, w/picResolotion)
-            cv2.putText(framePic0,"Ambulance "+ str(id) + " id 0"+" {}".format(strftime("%d %b %Y %H:%M:%S")) ,(2,(h/picResolotion) - 5), font, 0.2,(0,255,255),1)    
-            cv2.putText(framePic1,"Ambulance "+ str(id) + " id 1"+" {}".format(strftime("%d %b %Y %H:%M:%S")) ,(2,(h/picResolotion) - 5), font, 0.2,(0,255,255),1)    
+            framePic1 = imutils.resize(frame1, w/picResolotion)
+            cv2.putText(framePic0,"Ambulance "+ str(id) + " id 0"+" {}".format(strftime("%d %b %Y %H:%M:%S")) ,(2,(h/picResolotion) - 5), font, 0.3,(0,255,255),1)    
+            cv2.putText(framePic1,"Ambulance "+ str(id) + " id 1"+" {}".format(strftime("%d %b %Y %H:%M:%S")) ,(2,(h/picResolotion) - 5), font, 0.3,(0,255,255),1)    
             
             
             #cv2.imwrite(args["output"]+  'pic/ch' +str(args["idcamera"])  +'/img_{}.jpg'.format(int(current_time)), framePic)
             endtime = current_time
-            
-            ret0, buffer0 = cv2.imencode('.jpg', frame0)
-            ret1, buffer1 = cv2.imencode('.jpg', frame1)
+
+            ret0, buffer0 = cv2.imencode('.jpg', framePic0)
+            ret1, buffer1 = cv2.imencode('.jpg', framePic1)
 
             jpg_as_text0 = base64.b64encode(buffer0)
             jpg_as_text1 = base64.b64encode(buffer1)
@@ -154,16 +157,19 @@ while(cap0.isOpened() and cap1.isOpened()):
             data = {'ambulance_id':id,'images_name_1':jpg_as_text0,'images_name_2':jpg_as_text1}
             try:
                 r = requests.post(pic_url, data=data)
+                print r
+                connectionError = 0
                 GPIO.output(17,True)
                 countPic += 1
-                
-                connectionError = 0
+                print("Send > "+str(countPic)) 
+                print("FreamRate > "+str(1000/(current_time - last_time))+" Hz")
+                last_time = current_time
             except:
-                #GPIO.output(27,False)
                 connectionError += 1
                 if connectionError > 10:
+                    connectionError = 0
                     print "Connection Error"
-                    break 
+                    #break 
         #out.write(frame)
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -178,7 +184,9 @@ while(cap0.isOpened() and cap1.isOpened()):
 # Release everything if job is finished
 print("Time > "+str(timeVDO) + " m NumPic > "+str(countPic)) 
 print("Process time > "+str((current_time/1000) - startTime)+" sec")
-out.release()
-cap.release()
-print("Ok!!!") 
+#out.release()
+cap0.release()
+cap1.release()
+print("Ok!!!")
+GPIO.output(17,False) 
 GPIO.cleanup()
